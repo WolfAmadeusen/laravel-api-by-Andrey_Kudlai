@@ -22,8 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::prefix('/v1/')->group(function () {
+Route::prefix('v1')->middleware(['throttle:api', 'auth:sactum'])->group(function () {
    // Одна строка — это сразу группа маршрутов
-   Route::apiResource('/categories', CategoryController::class);
+   Route::apiResource('categories', CategoryController::class);
    Route::apiResource('posts', PostController::class);
 });

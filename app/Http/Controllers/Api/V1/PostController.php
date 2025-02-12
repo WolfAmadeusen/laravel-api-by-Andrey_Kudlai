@@ -6,40 +6,36 @@ use App\Http\Controllers\Controller;
 use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\V1\PostResource;
 
 class PostController extends Controller
 {
    public function index()
    {
-      return Post::all();
+      return PostResource::collection(Post::with('category')->paginate(5));
    }
 
    public function store(StorePostRequest $request)
    {
-      return Post::create($request->all());
+      return new PostResource(Post::create($request->all()));
    }
 
    public function show(Post $post)
    {
-      if ($post->id == 3) {
-         return response()->json([
-            'message' => "Forbidden",
-            "code" => 404
-         ], 403);
-      }
-      return $post;
+      return new PostResource($post);
    }
    public function update(UpdatePostRequest $request, Post $post)
    {
       $post->update($request->all());
-      return $post;
+      return new PostResource($post);
    }
 
-   public function destroy(Post $post) {
+   public function destroy(Post $post)
+   {
       $post->delete();
       return response()->json([
-         'message'=>'Post removed',
-         'fuck'=> "Да, это чистая правда"
+         'message' => 'Post removed',
+         'fuck' => "Да-да, это чистая правда"
       ]);
    }
 }
